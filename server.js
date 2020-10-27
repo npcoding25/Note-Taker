@@ -16,7 +16,7 @@ app.use(express.json());
 // File that has stored note info
 const dbFile = './db/db.json';
 
-// If file exists parse the data inside, otherwise it's an empty array
+// If file exists, parse the data inside, otherwise it's an empty array
 let noteList = fs.existsSync(dbFile) ?
     JSON.parse( fs.readFileSync(dbFile) ) : []
 
@@ -37,7 +37,7 @@ app.post('/api/notes', function(req, res){
     noteList.push(newNote)
     console.log(noteList)
 
-    // Write the list of notes to file
+    // Write the new list of notes to file
     fs.writeFileSync( dbFile, JSON.stringify( noteList ) )
     res.send( noteList )
 });
