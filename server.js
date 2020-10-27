@@ -1,7 +1,7 @@
 const express = require('express');
 const uuid = require('uuid');
 const app = express();
-
+const fs = require('fs')
 
 var PORT = process.env.PORT || 3000;
 
@@ -11,26 +11,26 @@ app.use( express.static('public') );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const dbFile = './app/db.json';
+const dbFile = './db/db.json';
 
-let noteList = [{id: "0000-0000-0000-0000", title: 'note1', text: 'note1 text'}];
-
-// Endpoints =================================================
+let noteList = fs.existsSync(dbFile) ?
+    JSON.parse( fs.readFileSync(dbFile) ) : []
 
 app.get('/api/notes', function(req,res) {
     res.send(noteList)
-})
+});
 
 app.post('/api/notes', function(req, res){
+    let newNote = req.body
     console.log(req.body)
-    let newNote = req.body;
-    newNote.id = uuid.v4()
-    console.log(newNote)
-    noteList.push(newNote)
-    res.send(newNote)
-})
-// for app.post: newNote.id = uuid.v4() // use a random unique id.
 
+    newNote.id = uuid.v4();
+    noteList.push(newNote)
+    console.log(noteList)
+
+    fs.writeFileSync( dbFile, JSON.stringify( noteList ) )
+    res.send( noteList )
+});
 
 app.delete('/api/notes/:noteID', function(req, res){
     const noteID = req.params.noteID
@@ -41,9 +41,12 @@ app.delete('/api/notes/:noteID', function(req, res){
             break
         }
     }
+    fs.writeFileSync( dbFile, JSON.stringify( noteList ) )
+    console.log(noteList)
     res.send( {message: 'Deleted Note'} )
-})
-// Listener ==================================================
+});
+
+// Listener
 app.listen(PORT, function() {
     console.log(`Serving notes on PORT ${PORT}`)
-})
+});
