@@ -9,7 +9,7 @@
 
 ## Objective
 
-To create an application that can be used to write, save, and delete notes. The notes are written and edited in a new file using express 
+To create an application that can be used to write, save, and delete notes. The notes must be written and edited in a new file using express.
 
 ## Functionality
 
